@@ -76,6 +76,7 @@ h2.head{
 .subhead{ font-size:clamp(1.05rem,1.7vw,1.3rem); color:var(--ink-soft); font-weight:500; margin:-.5rem 0 1.5rem; max-width:760px; }
 
 .accent{ color:var(--red); }
+.nobr{ white-space:nowrap; }
 
 .plabel{
   font-family:var(--mono); font-size:.72rem; letter-spacing:.06em; text-transform:uppercase;
@@ -229,7 +230,6 @@ ol.points .sub{ display:block; color:var(--ink-soft); margin-top:.2rem; font-fam
 .slide.active .balseg .pct{ opacity:.8; }
 .balseg .lbl{ font-weight:800; font-size:clamp(1.05rem,1.6vw,1.35rem); margin:.3rem 0 .25rem; }
 .balseg .bsub{ font-family:var(--mono); font-size:.72rem; letter-spacing:.08em; text-transform:uppercase; }
-.bal-caption{ display:flex; justify-content:space-between; font-family:var(--mono); font-size:.72rem; letter-spacing:.06em; text-transform:uppercase; color:var(--ink-soft); margin-top:.7rem; }
 
 /* problem web */
 svg.web{ width:100%; height:auto; max-height:62vh; display:block; overflow:visible; }
@@ -413,10 +413,13 @@ button:focus-visible, .topnav button:focus-visible{
     .replace(/\*(.+?)\*/g,'<span class="accent">$1</span>');
   const plain = s => String(s == null ? '' : s).replace(/\*/g,'');
   const pad2 = n => String(n).padStart(2,'0');
+  // Headings: keep hyphenated words together ("Balanced-Workload", not "Balanced-" / "Workload").
+  const heading = s => fmt(s).replace(/(^|>)([^<]+)/g, (m, open, text) =>
+    open + text.replace(/[^\s-]+(?:-[^\s-]+)+/g, '<span class="nobr">$&</span>'));
 
   const headBlock = s =>
     (s.eyebrow ? `<div class="eyebrow">${fmt(s.eyebrow)}</div>` : '') +
-    (s.head ? `<h2 class="head">${fmt(s.head)}</h2>` : '') +
+    (s.head ? `<h2 class="head">${heading(s.head)}</h2>` : '') +
     (s.subhead ? `<div class="subhead">${fmt(s.subhead)}</div>` : '');
 
   const problemLayout = (s, visual) => `
@@ -424,7 +427,7 @@ button:focus-visible, .topnav button:focus-visible{
       <div class="problem-copy">
         ${s.eyebrow ? `<div class="eyebrow">${fmt(s.eyebrow)}</div>` : ''}
         <div class="problem"><span class="plabel">Problem Statement</span><p>“${fmt(s.problem)}”</p></div>
-        <h2 class="head">${fmt(s.head)}</h2>
+        <h2 class="head">${heading(s.head)}</h2>
       </div>
       <div class="problem-visual">${visual}</div>
     </div>`;
