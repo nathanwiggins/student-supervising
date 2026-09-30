@@ -1,0 +1,751 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Building SUU's Future with Student Workers</title>
+<!--
+  Layout + styling only. All wording, order, notes, and timing live in
+  deck-content.js. Styling follows ../herfp/presentations/Project Slidedeck Neutral.html
+  (the SUU red version).
+-->
+<style>
+:root{
+  --red:#DB0000;
+  --red-dark:#9c0000;
+  --red-glow:rgba(219,0,0,.18);
+  --ink:#161513;
+  --ink-soft:#4a4744;
+  --paper:#ffffff;
+  --paper-soft:#f6f3ef;
+  --line:rgba(22,21,19,.12);
+  --radius:3px;
+  --blue:#2F5F8A;
+  --green:#3C7A4E;
+  --person:#5c5752;
+  --mono: ui-monospace, "SF Mono", "Cascadia Mono", "Roboto Mono", Menlo, Consolas, monospace;
+  --sans: -apple-system, BlinkMacSystemFont, "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+  --display: "Iowan Old Style", "Palatino Linotype", "Book Antiqua", Palatino, Georgia, serif;
+}
+*{box-sizing:border-box;}
+html,body{margin:0;padding:0;height:100%;background:var(--ink);overflow:hidden;}
+body{
+  font-family:var(--sans);
+  color:var(--ink);
+  -webkit-font-smoothing:antialiased;
+}
+
+/* ---------- background texture shared by all slides ---------- */
+.deck{
+  position:relative;
+  width:100vw;height:100vh;
+  background:var(--paper);
+  background-image:
+    radial-gradient(circle at 1px 1px, var(--line) 1px, transparent 1.6px);
+  background-size:26px 26px;
+}
+
+/* ---------- slides ---------- */
+.slide{
+  position:absolute; inset:0;
+  display:flex; flex-direction:column; justify-content:center;
+  padding:7vh 9vw 10vh 9vw;
+  opacity:0; transform:translateY(24px) scale(.99);
+  pointer-events:none;
+  transition:opacity .5s cubic-bezier(.22,.61,.36,1), transform .5s cubic-bezier(.22,.61,.36,1);
+}
+.slide.active{ opacity:1; transform:translateY(0) scale(1); pointer-events:auto; z-index:2;}
+.slide-inner{ max-width:1180px; margin:0 auto; width:100%; }
+
+.eyebrow{
+  display:inline-flex; align-items:center; gap:.5em;
+  font-family:var(--mono); font-size:.72rem; letter-spacing:.16em;
+  text-transform:uppercase; color:var(--red); font-weight:700;
+  margin-bottom:1.1rem;
+}
+.eyebrow::before{ content:""; width:22px; height:2px; background:var(--red); display:inline-block; }
+
+h1.title{
+  font-family:var(--display); font-size:clamp(2.3rem,5.6vw,4.4rem);
+  line-height:1.05; letter-spacing:-.01em; font-weight:700; margin:0 0 .5rem; text-wrap:balance;
+}
+h2.head{
+  font-family:var(--display); font-size:clamp(1.9rem,4vw,3rem);
+  line-height:1.1; letter-spacing:-.005em; font-weight:700; margin:0 0 1.1rem; text-wrap:balance;
+}
+.subhead{ font-size:clamp(1.05rem,1.7vw,1.3rem); color:var(--ink-soft); font-weight:500; margin:-.5rem 0 1.5rem; max-width:760px; }
+
+.accent{ color:var(--red); }
+
+.plabel{
+  font-family:var(--mono); font-size:.72rem; letter-spacing:.06em; text-transform:uppercase;
+  color:var(--red); font-weight:800; margin:0 0 .55rem; display:block;
+}
+
+/* click-to-reveal pieces (anything with data-step) */
+.build{ opacity:0; transform:translateY(14px); transition:opacity .45s cubic-bezier(.22,.61,.36,1), transform .45s cubic-bezier(.22,.61,.36,1); }
+.build.shown{ opacity:1; transform:none; }
+
+/* ---------- title slide ---------- */
+.slide.title-slide{ align-items:flex-start; }
+.title-shape{
+  position:absolute; top:-18%; right:-10%; width:60vw; height:140%;
+  background:linear-gradient(135deg,var(--red) 0%, var(--red-dark) 100%);
+  clip-path:polygon(38% 0, 100% 0, 100% 100%, 8% 100%);
+  opacity:.97;
+}
+.title-shape::after{
+  content:""; position:absolute; inset:0;
+  background-image:radial-gradient(circle at 1px 1px, rgba(255,255,255,.22) 1px, transparent 1.6px);
+  background-size:22px 22px; mix-blend-mode:overlay;
+}
+.title-block{ position:relative; z-index:3; max-width:640px; }
+.title-logo{ height:132px; width:auto; margin-bottom:1.6rem; display:block; }
+
+.presenters{ display:flex; flex-wrap:wrap; gap:.9rem 2rem; margin-top:1.5rem; }
+.presenter{ border-left:3px solid var(--red); padding:.1rem 0 .1rem .8rem; }
+.presenter b{ display:block; font-size:1.05rem; font-weight:800; }
+.presenter span{
+  display:block; margin-top:.25rem;
+  font-family:var(--mono); font-size:.7rem; letter-spacing:.07em; text-transform:uppercase; color:var(--ink-soft);
+}
+
+.title-tag{
+  position:absolute; bottom:8vh; right:9vw; z-index:3; text-align:right;
+  color:#fff;
+}
+.title-tag .big{ font-family:var(--display); font-weight:700; font-size:clamp(2.2rem,5vw,3.6rem); letter-spacing:-.01em; line-height:1.02; }
+.title-tag .small{ font-size:.85rem; letter-spacing:.06em; text-transform:uppercase; opacity:.9; margin-top:.7rem; }
+
+/* title reprise: old title gets struck and shrinks, new title opens beneath it */
+.old-title{
+  text-decoration:line-through; text-decoration-color:transparent; text-decoration-thickness:.08em;
+  transition:text-decoration-color .35s, color .4s .35s, font-size .6s .35s cubic-bezier(.22,.61,.36,1);
+}
+.old-title.shown{ font-size:clamp(1.3rem,2.6vw,2rem); color:rgba(22,21,19,.42); text-decoration-color:var(--red); }
+.old-title.shown .accent{ color:inherit; }
+h1.new-title{
+  max-height:0; opacity:0; overflow:hidden; margin:0;
+  transition:max-height .7s .35s cubic-bezier(.22,.61,.36,1), opacity .5s .6s, margin .7s .35s;
+}
+h1.new-title.shown{ max-height:5em; opacity:1; margin:.35rem 0 .5rem; }
+
+.brand.hidden{ opacity:0; pointer-events:none; transition:opacity .3s; }
+
+/* ---------- outro ---------- */
+.slide.outro{ align-items:center; text-align:center; }
+.outro-logo{ width:min(52vw,620px); height:auto; display:block; margin:0 auto; }
+
+/* ---------- divider slides ---------- */
+.slide.divider{ background:var(--red); align-items:center; justify-content:center; text-align:center; }
+.slide.divider .slide-inner{ position:relative; z-index:2; }
+.divider .num{
+  font-family:var(--mono); font-weight:800; color:rgba(255,255,255,.35);
+  font-size:clamp(4rem,14vw,10rem); line-height:1; letter-spacing:-.04em;
+}
+.divider h2{
+  font-family:var(--display); color:#fff; font-size:clamp(2rem,6vw,4rem); font-weight:700; letter-spacing:-.01em; margin:.2em 0 0; text-wrap:balance;
+}
+.divider .sub{ color:rgba(255,255,255,.82); margin:.9rem auto 0; font-size:1.15rem; max-width:640px; line-height:1.5; }
+.divider-shape{
+  position:absolute; inset:0; overflow:hidden;
+}
+.divider-shape span{
+  position:absolute; border:2px solid rgba(255,255,255,.14); border-radius:50%;
+}
+.divider-shape span:nth-child(1){ width:60vh; height:60vh; top:-15vh; left:-15vh; }
+.divider-shape span:nth-child(2){ width:38vh; height:38vh; bottom:-10vh; right:6vw; }
+
+/* ---------- question / statement slides ---------- */
+.slide.question .slide-inner{ position:relative; z-index:1; }
+.qtext{
+  font-family:var(--display); font-weight:700; font-size:clamp(2.6rem,6.2vw,5.4rem);
+  line-height:1.06; letter-spacing:-.015em; margin:0; max-width:1050px; text-wrap:balance;
+}
+.qsub{ font-size:clamp(1.05rem,1.7vw,1.3rem); color:var(--ink-soft); margin:1.4rem 0 0; max-width:760px; }
+.qrule{ width:72px; height:4px; background:var(--red); margin-top:2.2rem; }
+.qmark{
+  position:absolute; right:5vw; top:50%; transform:translateY(-52%);
+  font-family:var(--display); font-weight:700; font-size:min(80vh,48vw); line-height:1;
+  color:var(--red); opacity:.06; pointer-events:none; user-select:none;
+}
+
+/* ---------- card grids ---------- */
+.cards{
+  display:grid; grid-template-columns:repeat(var(--cols,3),minmax(0,1fr));
+  gap:1px; margin-top:1.7rem; background:var(--line); border:1px solid var(--line); border-radius:var(--radius); overflow:hidden;
+}
+.card{
+  position:relative; background:var(--paper); border-top:2px solid var(--red);
+  padding:1.4rem 1.45rem 1.5rem;
+}
+.card .idx{
+  font-family:var(--mono); font-weight:800; color:var(--red); font-size:.74rem;
+  letter-spacing:.07em; margin-bottom:.6rem; display:block; text-transform:uppercase;
+}
+.card h3{ font-size:1.2rem; margin:0 0 .5rem; font-weight:800; letter-spacing:-.005em; }
+.card p{ font-size:1rem; line-height:1.5; color:var(--ink-soft); margin:0; }
+.cards.few .card{ padding:1.7rem 1.7rem 1.9rem; }
+.cards.few .card h3{ font-size:1.5rem; }
+.cards.few .card p{ font-size:1.08rem; }
+.card.lead{
+  background:var(--red); color:#fff; border-top-color:var(--red-dark);
+  display:flex; flex-direction:column; justify-content:center;
+}
+.card.lead h3{ font-family:var(--display); font-size:1.8rem; line-height:1.1; margin:0; }
+.card.lead .arrow{ font-size:1.8rem; line-height:1; margin-top:.6rem; }
+
+/* ---------- numbered points ---------- */
+ol.points{ list-style:none; margin:1.6rem 0 0; padding:0; max-width:920px; display:grid; gap:.7rem; }
+ol.points li{
+  display:grid; grid-template-columns:3rem 1fr; align-items:center; gap:.9rem;
+  padding:.95rem 1.2rem; background:var(--paper); border:1px solid var(--line); border-left:4px solid var(--red); border-radius:var(--radius);
+}
+.pnum{ font-family:var(--mono); font-weight:800; color:var(--red); font-size:1.15rem; letter-spacing:.02em; }
+ol.points b{ font-size:clamp(1.05rem,1.6vw,1.3rem); font-weight:700; line-height:1.35; display:block; }
+ol.points .sub{ display:block; color:var(--ink-soft); margin-top:.2rem; font-family:var(--mono); font-size:.76rem; letter-spacing:.06em; text-transform:uppercase; }
+
+/* ---------- problem-statement slides (quote left, graphic right) ---------- */
+.problem-layout{ display:grid; grid-template-columns:minmax(0,5fr) minmax(0,7fr); gap:4.5vw; align-items:center; }
+.problem{ margin:0 0 1.7rem; padding:1.1rem 1.3rem 1.2rem; background:var(--paper-soft); border-left:4px solid var(--red); border-radius:2px; }
+.problem p{ margin:0; font-family:var(--display); font-style:italic; font-size:clamp(1.1rem,1.75vw,1.45rem); line-height:1.38; }
+.problem-copy h2.head{ margin:0; }
+.problem-visual{ min-width:0; }
+
+/* balanced-workload bar */
+.balbar{ display:flex; height:clamp(120px,19vh,170px); border-radius:10px; overflow:hidden; background:var(--paper-soft); box-shadow:0 8px 24px rgba(22,21,19,.1); }
+.balseg{
+  flex:0 0 0%; min-width:0; overflow:hidden; color:#fff;
+  display:flex; flex-direction:column; justify-content:center; padding:0 1.3rem;
+  transition:flex-basis 1s cubic-bezier(.22,.61,.36,1);
+}
+.balseg.left{ background:var(--blue); }
+.balseg.right{ background:var(--green); transition-delay:.35s; }
+.slide.active .balseg.left{ flex-basis:var(--pct); }
+.slide.active .balseg.right{ flex-basis:calc(100% - var(--pct)); }
+.balseg > *{ opacity:0; transition:opacity .4s 1.1s; white-space:nowrap; }
+.slide.active .balseg > *{ opacity:1; }
+.balseg .pct{ font-family:var(--mono); font-weight:800; font-size:.78rem; opacity:.85; letter-spacing:.04em; }
+.slide.active .balseg .pct{ opacity:.8; }
+.balseg .lbl{ font-weight:800; font-size:clamp(1.05rem,1.6vw,1.35rem); margin:.3rem 0 .25rem; }
+.balseg .bsub{ font-family:var(--mono); font-size:.72rem; letter-spacing:.08em; text-transform:uppercase; }
+.bal-caption{ display:flex; justify-content:space-between; font-family:var(--mono); font-size:.72rem; letter-spacing:.06em; text-transform:uppercase; color:var(--ink-soft); margin-top:.7rem; }
+
+/* problem web */
+svg.web{ width:100%; height:auto; max-height:62vh; display:block; overflow:visible; }
+.web .link{ stroke:var(--ink-soft); stroke-width:2.5; transition:opacity .4s, stroke .4s; }
+.web .link.shown{ opacity:.3; stroke-dasharray:6 7; }
+.web .node{ transition:opacity .45s; }
+.web .node circle{ fill:#fff; stroke:var(--ink); stroke-width:3; transition:fill .4s, stroke .4s; }
+.web .node .bang{ font-family:var(--mono); font-weight:800; fill:var(--ink); text-anchor:middle; dominant-baseline:central; transition:opacity .3s; }
+.web .node .x{ stroke:var(--ink-soft); stroke-width:5; stroke-linecap:round; fill:none; opacity:0; transition:opacity .3s; }
+.web .node.shown{ opacity:.45; }
+.web .node.shown circle{ fill:var(--paper-soft); stroke:#9a958f; }
+.web .node.shown .bang{ opacity:0; }
+.web .node.shown .x{ opacity:1; }
+.web .node.shown, .web .node.shown *, .web .link.shown{ transition-delay:calc(var(--i) * .14s); }
+.web .rel-label{ font-family:var(--mono); font-size:14px; letter-spacing:.06em; fill:var(--ink-soft); text-anchor:middle; text-transform:uppercase; }
+.web .core .body{ fill:var(--paper-soft); stroke:var(--ink); stroke-width:3.5; transition:fill .5s, stroke .5s; }
+.web .core .ring{ fill:none; stroke:var(--red); stroke-width:2; opacity:0; transition:opacity .5s .2s; }
+.web .core text{ font-family:var(--display); font-weight:700; font-size:31px; text-anchor:middle; dominant-baseline:central; transition:opacity .4s; }
+.web .core .before{ fill:var(--ink); }
+.web .core .after{ fill:#fff; opacity:0; }
+.web .core .core-bang{ font-family:var(--mono); font-weight:800; font-size:38px; fill:var(--ink); }
+.web .core .star{ fill:#fff; opacity:0; transform-box:fill-box; transform-origin:center; transform:scale(.3); transition:opacity .4s .15s, transform .55s .15s cubic-bezier(.34,1.56,.64,1); }
+.web .core.shown .body{ fill:var(--red); stroke:var(--red-dark); }
+.web .core.shown .ring{ opacity:.35; }
+.web .core.shown .before, .web .core.shown .core-bang{ opacity:0; }
+.web .core.shown .after{ opacity:1; }
+.web .core.shown .star{ opacity:1; transform:scale(1); }
+
+/* line of people */
+.people-row + .people-row{ margin-top:1.6rem; }
+.people-row svg{ width:100%; height:auto; max-height:28vh; display:block; }
+.person circle, .person rect{ fill:var(--person); }
+.person line{ stroke:var(--person); stroke-width:12; stroke-linecap:round; }
+.person.student circle, .person.student rect{ fill:var(--red); }
+.person.student line{ stroke:var(--red); }
+.people-row .ground{ fill:none; stroke:rgba(22,21,19,.22); stroke-width:3; stroke-linejoin:round; }
+.people-row .sw-label{ font-family:var(--mono); font-weight:800; font-size:16px; letter-spacing:.08em; text-transform:uppercase; fill:var(--red); text-anchor:middle; }
+.row-caption{ font-size:clamp(1rem,1.5vw,1.2rem); color:var(--ink-soft); margin-top:.5rem; padding-top:.6rem; border-top:1px solid var(--line); }
+.row-caption b{ color:var(--ink); font-weight:800; letter-spacing:.03em; }
+.row-caption .accent{ font-weight:800; letter-spacing:.03em; }
+
+/* ---------- QR slide ---------- */
+.qr-layout{ display:grid; grid-template-columns:minmax(0,1fr) auto; gap:5vw; align-items:center; }
+.qr-layout .lede{ font-size:clamp(1.05rem,1.7vw,1.3rem); line-height:1.55; color:var(--ink-soft); max-width:560px; margin:0; }
+.qr-card{ background:#fff; padding:1.4rem; border:1px solid var(--line); border-top:4px solid var(--red); border-radius:var(--radius); box-shadow:0 10px 30px rgba(22,21,19,.1); }
+.qr-card img{ width:min(52vh,440px); height:auto; display:block; image-rendering:pixelated; }
+.join{ display:inline-flex; gap:2rem; margin-top:1.8rem; padding:1rem 1.4rem; background:var(--ink); color:#fff; border-radius:var(--radius); }
+.join .jl{ display:block; font-family:var(--mono); font-size:.68rem; letter-spacing:.12em; text-transform:uppercase; color:rgba(255,255,255,.65); }
+.join .jv{ display:block; font-family:var(--mono); font-weight:800; font-size:1.5rem; margin-top:.2rem; }
+.join.missing{ background:none; color:var(--red); border:2px dashed var(--red); font-family:var(--mono); font-size:.8rem; letter-spacing:.04em; }
+
+/* ---------- footer / nav chrome ---------- */
+.chip{
+  background:rgba(255,255,255,.82); backdrop-filter:blur(8px); -webkit-backdrop-filter:blur(8px);
+  border-radius:999px; box-shadow:0 6px 18px rgba(22,21,19,.1); border:1px solid rgba(22,21,19,.06);
+}
+
+.brand{
+  position:fixed; top:20px; left:9vw; z-index:20; display:flex; align-items:center; gap:.5rem;
+  font-family:var(--mono); font-weight:800; font-size:.78rem; letter-spacing:.04em; color:var(--ink);
+  padding:.5rem .85rem;
+}
+.brand .sq{ width:12px; height:12px; background:var(--red); border-radius:2px; display:inline-block; }
+
+.topnav{
+  position:fixed; top:20px; right:9vw; z-index:20; display:flex; gap:1.2rem;
+  font-family:var(--mono); font-size:.7rem; letter-spacing:.07em; text-transform:uppercase;
+  padding:.55rem 1.1rem;
+}
+.topnav button{
+  background:none; border:none; cursor:pointer; padding:0; color:var(--ink-soft); font:inherit; letter-spacing:inherit;
+}
+.topnav button.active{ color:var(--red); font-weight:800; }
+
+.counter{
+  position:fixed; bottom:20px; left:9vw; z-index:20; font-family:var(--mono); font-size:.76rem; color:var(--ink-soft);
+  padding:.45rem .8rem;
+}
+
+.navbtns{ position:fixed; bottom:22px; right:9vw; z-index:20; display:flex; gap:.6rem; }
+.navbtn{
+  width:40px; height:40px; border-radius:50%; background:var(--ink); color:#fff; border:none;
+  cursor:pointer; font-size:1rem; display:flex; align-items:center; justify-content:center;
+  transition:background .2s, transform .15s;
+}
+.navbtn:hover{ background:var(--red); }
+.navbtn:active{ transform:scale(.92); }
+.navbtn:disabled{ opacity:.3; cursor:default; }
+
+.progress{
+  position:fixed; left:0; bottom:0; height:3px; background:var(--red); z-index:25; width:0%;
+  transition:width .4s cubic-bezier(.22,.61,.36,1);
+}
+
+.content-error{
+  position:fixed; top:0; left:0; right:0; z-index:100; background:var(--red); color:#fff;
+  font-family:var(--mono); font-size:.85rem; line-height:1.5; padding:.9rem 1.3rem; white-space:pre-wrap;
+}
+
+@media (max-width:900px){
+  .problem-layout, .qr-layout{ grid-template-columns:1fr; }
+  .cards{ grid-template-columns:repeat(2,minmax(0,1fr)); }
+  .topnav{ display:none; }
+}
+
+@media (prefers-reduced-motion: reduce){
+  .slide{ transition:opacity .15s linear; transform:none !important; }
+  .slide.active{ transform:none !important; }
+  .progress, .balseg, .build, .web *, .old-title, .new-title{ transition:none !important; }
+}
+
+button:focus-visible, .topnav button:focus-visible{
+  outline:2px solid var(--red); outline-offset:2px; border-radius:2px;
+}
+
+/* ---------- PDF export: one slide per page, every click-reveal shown ---------- */
+@media print{
+  @page{ size:1600px 900px; margin:0; }
+  html,body{ height:auto; overflow:visible; background:#fff; }
+  body{ -webkit-print-color-adjust:exact; print-color-adjust:exact; }
+  .deck{ width:auto; height:auto; background:none; }
+  .chip, .navbtns, .progress, .content-error{ display:none !important; }
+  .slide{
+    position:relative; inset:auto; width:1600px; height:900px; overflow:hidden;
+    padding:63px 144px 90px;
+    opacity:1 !important; transform:none !important; break-after:page;
+    background-color:var(--paper);
+    background-image:radial-gradient(circle at 1px 1px, var(--line) 1px, transparent 1.6px);
+    background-size:26px 26px;
+  }
+  .slide.divider{ background:var(--red); }
+  .slide, .slide *{ transition:none !important; }
+}
+</style>
+<script>
+  // Catch a broken edit in deck-content.js so the deck shows a message instead of a blank screen.
+  window.__deckLoadErrors = [];
+  window.addEventListener('error', function(e){
+    if(e.message) window.__deckLoadErrors.push(e.message + (e.lineno ? ' (line ' + e.lineno + ')' : ''));
+  });
+</script>
+<script src="deck-content.js" onerror="window.__deckMissing=true"></script>
+</head>
+<body>
+
+<div class="deck" id="deck">
+  <div class="progress" id="progress"></div>
+  <div class="brand chip" id="brand"><span class="sq"></span> <span id="brandText"></span></div>
+  <nav class="topnav chip" id="topnav"></nav>
+  <div class="counter chip" id="counter"></div>
+  <div class="navbtns">
+    <button class="navbtn" id="prevBtn" aria-label="Previous slide">‹</button>
+    <button class="navbtn" id="nextBtn" aria-label="Next slide">›</button>
+  </div>
+</div>
+
+<script>
+(function(){
+  const deck = document.getElementById('deck');
+  const D = window.DECK;
+
+  function banner(msg){
+    const b = document.createElement('div');
+    b.className = 'content-error';
+    b.textContent = msg;
+    document.body.appendChild(b);
+  }
+
+  if(!D || !Array.isArray(D.slides)){
+    banner('Content error: deck-content.js ' + (window.__deckMissing ? 'was not found next to this HTML file.' : 'did not load.') +
+      (window.__deckLoadErrors.length ? '\n' + window.__deckLoadErrors.join('\n') : '\nCheck for a missing comma or quote near your last edit.'));
+    return;
+  }
+
+  /* ---------- text helpers ---------- */
+  const esc = s => String(s == null ? '' : s)
+    .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+  // **bold**, *SUU red*
+  const fmt = s => esc(s)
+    .replace(/\*\*(.+?)\*\*/g,'<b>$1</b>')
+    .replace(/\*(.+?)\*/g,'<span class="accent">$1</span>');
+  const plain = s => String(s == null ? '' : s).replace(/\*/g,'');
+  const pad2 = n => String(n).padStart(2,'0');
+
+  const headBlock = s =>
+    (s.eyebrow ? `<div class="eyebrow">${fmt(s.eyebrow)}</div>` : '') +
+    (s.head ? `<h2 class="head">${fmt(s.head)}</h2>` : '') +
+    (s.subhead ? `<div class="subhead">${fmt(s.subhead)}</div>` : '');
+
+  const problemLayout = (s, visual) => `
+    <div class="slide-inner problem-layout">
+      <div class="problem-copy">
+        ${s.eyebrow ? `<div class="eyebrow">${fmt(s.eyebrow)}</div>` : ''}
+        <div class="problem"><span class="plabel">Problem Statement</span><p>“${fmt(s.problem)}”</p></div>
+        <h2 class="head">${fmt(s.head)}</h2>
+      </div>
+      <div class="problem-visual">${visual}</div>
+    </div>`;
+
+  // Split a label into two balanced lines for the problem-web core.
+  function splitTwo(t){
+    const w = plain(t).split(/\s+/).filter(Boolean);
+    if(w.length < 2) return [w.join(' ')];
+    let best = 1, bestLen = Infinity;
+    for(let i=1;i<w.length;i++){
+      const len = Math.max(w.slice(0,i).join(' ').length, w.slice(i).join(' ').length);
+      if(len < bestLen){ bestLen = len; best = i; }
+    }
+    return [w.slice(0,best).join(' '), w.slice(best).join(' ')];
+  }
+
+  function starPath(cx, cy, outer, inner){
+    let d = '';
+    for(let i=0;i<10;i++){
+      const r = i % 2 ? inner : outer;
+      const a = -Math.PI/2 + i * Math.PI/5;
+      d += (i ? 'L' : 'M') + (cx + r*Math.cos(a)).toFixed(1) + ' ' + (cy + r*Math.sin(a)).toFixed(1);
+    }
+    return d + 'Z';
+  }
+
+  /* ---------- graphics ---------- */
+  // Related-problem positions around the core (x, y, radius), in viewBox units.
+  const WEB_POS = [[120,95,38],[592,78,32],[655,272,40],[540,412,30],[182,398,34],[52,248,28],[372,36,24],[322,452,22]];
+
+  function problemWeb(s){
+    const cx = 360, cy = 240, R = 112;
+    const rel = (s.related || []).slice(0, WEB_POS.length);
+    const links = rel.map((_, i) => {
+      const [x, y] = WEB_POS[i];
+      return `<line class="link" data-step="2" style="--i:${i}" x1="${cx}" y1="${cy}" x2="${x}" y2="${y}"/>`;
+    }).join('');
+    const nodes = rel.map((lbl, i) => {
+      const [x, y, r] = WEB_POS[i], d = r * .42;
+      return `<g class="node" data-step="2" style="--i:${i}">
+        <circle cx="${x}" cy="${y}" r="${r}"/>
+        <text class="bang" x="${x}" y="${y}" style="font-size:${Math.round(r*.95)}px">!</text>
+        <path class="x" d="M${x-d} ${y-d}L${x+d} ${y+d}M${x+d} ${y-d}L${x-d} ${y+d}"/>
+        ${lbl ? `<text class="rel-label" x="${x}" y="${y + r + 20}">${esc(lbl)}</text>` : ''}
+      </g>`;
+    }).join('');
+    const label = (t, cls) => {
+      const L = splitTwo(t);
+      const ys = L.length === 1 ? [cy + 22] : [cy + 8, cy + 44];
+      return `<text class="${cls}">${L.map((l, k) => `<tspan x="${cx}" y="${ys[k]}">${esc(l)}</tspan>`).join('')}</text>`;
+    };
+    const core = s.core || {};
+    return `<svg class="web" viewBox="0 0 720 490" role="img" aria-label="${esc(plain(core.after))} at the center of related problems">
+      ${links}
+      <g class="core" data-step="1">
+        <circle class="ring" cx="${cx}" cy="${cy}" r="${R + 14}"/>
+        <circle class="body" cx="${cx}" cy="${cy}" r="${R}"/>
+        <text class="core-bang" x="${cx}" y="${cy - 46}">!</text>
+        <path class="star" d="${starPath(cx, cy - 46, 25, 10.5)}"/>
+        ${label(core.before, 'before')}${label(core.after, 'after')}
+      </g>
+      ${nodes}
+    </svg>`;
+  }
+
+  // One person, feet on ground line g. Arms: 'hand' reaches the neighbor, 'down' hangs.
+  function person(cx, g, cls, armL, armR){
+    const sh = g - 118;
+    const arm = (dir, mode) => {
+      const [ex, ey] = mode === 'hand' ? [cx + dir*60, g - 84] : [cx + dir*25, g - 62];
+      return `<line x1="${cx + dir*15}" y1="${sh}" x2="${ex}" y2="${ey}"/>`;
+    };
+    return `<g class="person ${cls}">
+      <line x1="${cx-9}" y1="${g-78}" x2="${cx-12}" y2="${g-6}"/>
+      <line x1="${cx+9}" y1="${g-78}" x2="${cx+12}" y2="${g-6}"/>
+      ${arm(-1, armL)}${arm(1, armR)}
+      <rect x="${cx-19}" y="${g-128}" width="38" height="62" rx="16"/>
+      <circle cx="${cx}" cy="${g-150}" r="17"/>
+    </g>`;
+  }
+
+  function peopleRow(mode, studentLabel){
+    const W = 720, xs = [120, 240, 360, 480, 600], si = 2;
+    const drop = mode === 'limited' ? 46 : 0, g = 180, H = g + drop + 42;
+    const ground = drop
+      ? `M16 ${g+2}H${xs[si]-54}V${g+drop+2}H${xs[si]+54}V${g+2}H${W-16}`
+      : `M16 ${g+2}H${W-16}`;
+    const people = xs.map((x, i) => {
+      let L = i > 0 ? 'hand' : 'down', R = i < xs.length - 1 ? 'hand' : 'down';
+      if(drop){
+        if(i === si){ L = R = 'down'; }
+        if(i === si - 1) R = 'down';
+        if(i === si + 1) L = 'down';
+      }
+      return person(x, i === si ? g + drop : g, i === si ? 'student' : '', L, R);
+    }).join('');
+    return `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Line of people; the student worker ${drop ? 'stands lower than' : 'holds hands with'} the others">
+      <path class="ground" d="${ground}"/>${people}
+      <text class="sw-label" x="${xs[si]}" y="${g + drop + 32}">${esc(plain(studentLabel))}</text>
+    </svg>`;
+  }
+
+  /* ---------- layouts ---------- */
+  const titleSlide = D.slides.find(s => s.layout === 'title');
+
+  function titleHTML(s, reprise){
+    const heading = reprise
+      ? `<h1 class="title old-title" data-step="1">${fmt(s.title)}</h1><h1 class="title new-title" data-step="1">${fmt(reprise.newTitle)}</h1>`
+      : `<h1 class="title">${fmt(s.title)}</h1>`;
+    const tag = s.tag || {};
+    return `
+      <div class="title-shape"></div>
+      <div class="title-block">
+        <img class="title-logo" src="assets/suu-logo.png" alt="Southern Utah University">
+        ${s.eyebrow ? `<div class="eyebrow">${fmt(s.eyebrow)}</div>` : ''}
+        ${heading}
+        <div class="presenters">${(s.presenters || []).map(p =>
+          `<div class="presenter"><b>${fmt(p.name)}</b><span>${fmt(p.role)}</span></div>`).join('')}</div>
+      </div>
+      <div class="title-tag">
+        <div class="big">${(tag.lines || []).map(fmt).join('<br>')}</div>
+        ${tag.small ? `<div class="small">${fmt(tag.small)}</div>` : ''}
+      </div>`;
+  }
+
+  const LAYOUTS = {
+    'title': s => ({ cls:'title-slide has-logo', html:titleHTML(s) }),
+
+    'title-reprise': s => {
+      if(!titleSlide) throw new Error('title-reprise needs a slide with layout "title"');
+      return { cls:'title-slide has-logo', html:titleHTML(titleSlide, s) };
+    },
+
+    'divider': s => ({ cls:'divider', html:`
+      <div class="divider-shape"><span></span><span></span></div>
+      <div class="slide-inner">
+        <div class="num">${fmt(s.num)}</div>
+        <h2>${fmt(s.title)}</h2>
+        ${s.sub ? `<div class="sub">${fmt(s.sub)}</div>` : ''}
+      </div>` }),
+
+    'cards': s => {
+      const cards = s.cards || [];
+      const n = cards.length + (s.lead ? 1 : 0);
+      const lead = s.lead ? `<div class="card lead"><h3>${fmt(s.lead)}</h3><span class="arrow" aria-hidden="true">→</span></div>` : '';
+      return { html:`<div class="slide-inner">${headBlock(s)}
+        <div class="cards${n <= 3 ? ' few' : ''}" style="--cols:${n}">${lead}${cards.map(c => `
+          <div class="card">${c.idx ? `<span class="idx">${fmt(c.idx)}</span>` : ''}<h3>${fmt(c.title)}</h3>${c.text ? `<p>${fmt(c.text)}</p>` : ''}</div>`).join('')}
+        </div></div>` };
+    },
+
+    'points': s => ({ html:`<div class="slide-inner">${headBlock(s)}
+      <ol class="points">${(s.items || []).map((it, i) => `
+        <li${s.reveal ? ` class="build" data-step="${i+1}"` : ''}><span class="pnum">${pad2(i+1)}</span>
+          <div><b>${fmt(it.title)}</b>${it.sub ? `<span class="sub">${fmt(it.sub)}</span>` : ''}</div></li>`).join('')}
+      </ol></div>` }),
+
+    'question': s => ({ cls:'question', html:`
+      ${/\?\s*$/.test(plain(s.text)) ? '<div class="qmark" aria-hidden="true">?</div>' : ''}
+      <div class="slide-inner">
+        ${s.eyebrow ? `<div class="eyebrow">${fmt(s.eyebrow)}</div>` : ''}
+        <p class="qtext">${fmt(s.text)}</p>
+        ${s.sub ? `<p class="qsub">${fmt(s.sub)}</p>` : ''}
+        <div class="qrule"></div>
+      </div>` }),
+
+    'balance': s => {
+      const p = Math.max(0, Math.min(100, Number(s.split == null ? 50 : s.split)));
+      const seg = (side, part, pct) => `<div class="balseg ${side}">
+          <span class="pct">${pct}%</span><span class="lbl">${fmt(part.label)}</span><span class="bsub">${fmt(part.sub)}</span></div>`;
+      return { html:problemLayout(s, `
+        <div class="balbar" style="--pct:${p}%">${seg('left', s.left || {}, p)}${seg('right', s.right || {}, 100 - p)}</div>`) };
+    },
+
+    'problem-web': s => ({ html:problemLayout(s, problemWeb(s)) }),
+
+    'people': s => {
+      const second = s.revealSecond ? ' build" data-step="1' : '';
+      return { html:problemLayout(s, `
+        <div class="people-row">${peopleRow('limited', s.studentLabel)}<div class="row-caption">${fmt(s.limited)}</div></div>
+        <div class="people-row${second}">${peopleRow('realized', s.studentLabel)}<div class="row-caption">${fmt(s.realized)}</div></div>`) };
+    },
+
+    'qr': s => {
+      const parts = [];
+      if(s.joinAt) parts.push(`<div><span class="jl">Join at</span><span class="jv">${esc(s.joinAt)}</span></div>`);
+      if(s.code) parts.push(`<div><span class="jl">Code</span><span class="jv">${esc(s.code)}</span></div>`);
+      const join = parts.length
+        ? `<div class="join">${parts.join('')}</div>`
+        : `<div class="join missing">Add the Slido link / code in deck-content.js</div>`;
+      return { html:`<div class="slide-inner qr-layout">
+        <div>${headBlock(s)}${s.lede ? `<p class="lede">${fmt(s.lede)}</p>` : ''}${join}</div>
+        <div class="qr-card"><img src="${esc(s.image || 'assets/slido-qr.png')}" alt="Slido QR code"></div>
+      </div>` };
+    },
+
+    'outro': () => ({ cls:'outro has-logo', html:`<img class="outro-logo" src="assets/suu-logo.png" alt="Southern Utah University">` }),
+  };
+
+  /* ---------- build slides ---------- */
+  const problems = [];
+  const seen = new Set();
+  const slides = [];
+  D.slides.forEach((s, i) => {
+    const where = `slide ${i+1} (${s.id || 'no id'})`;
+    if(!s.id) problems.push(`${where}: missing id`);
+    else if(seen.has(s.id)) problems.push(`${where}: duplicate id`);
+    seen.add(s.id);
+    const el = document.createElement('section');
+    let out;
+    try{
+      if(!LAYOUTS[s.layout]) throw new Error(`unknown layout "${s.layout}"`);
+      out = LAYOUTS[s.layout](s);
+    }catch(err){
+      problems.push(`${where}: ${err.message}`);
+      out = { html:`<div class="slide-inner"><div class="eyebrow">Content error</div><h2 class="head">${esc(where)}</h2><p>${esc(err.message)}</p></div>` };
+    }
+    el.className = 'slide ' + (out.cls || '');
+    el.dataset.id = s.id || '';
+    el.innerHTML = out.html;
+    deck.appendChild(el);
+    slides.push(el);
+  });
+
+  if(D.theme){
+    if(D.theme.blue) document.documentElement.style.setProperty('--blue', D.theme.blue);
+    if(D.theme.green) document.documentElement.style.setProperty('--green', D.theme.green);
+  }
+  document.getElementById('brandText').textContent = (D.meta && D.meta.brand) || '';
+
+  const indexOfId = id => slides.findIndex(el => el.dataset.id === id);
+  const topnav = document.getElementById('topnav');
+  const navItems = (D.nav || []).map(n => {
+    const at = indexOfId(n.to);
+    if(at < 0) problems.push(`nav "${n.label}": no slide with id "${n.to}"`);
+    const b = document.createElement('button');
+    b.textContent = n.label;
+    b.addEventListener('click', () => go(at, 0));
+    topnav.appendChild(b);
+    return { b, at };
+  }).filter(n => n.at >= 0);
+
+  if(problems.length) banner('Content error in deck-content.js:\n' + problems.join('\n'));
+
+  /* ---------- navigation + click-reveals ---------- */
+  const total = slides.length;
+  const counter = document.getElementById('counter');
+  const progress = document.getElementById('progress');
+  const prevBtn = document.getElementById('prevBtn');
+  const nextBtn = document.getElementById('nextBtn');
+  const brand = document.getElementById('brand');
+  let idx = 0, step = 0;
+
+  const maxStep = el => Math.max(0, ...Array.from(el.querySelectorAll('[data-step]'), x => +x.dataset.step));
+  const applyStep = (el, n) => el.querySelectorAll('[data-step]').forEach(x => x.classList.toggle('shown', +x.dataset.step <= n));
+
+  function render(){
+    slides.forEach((s, i) => s.classList.toggle('active', i === idx));
+    applyStep(slides[idx], step);
+    counter.textContent = pad2(idx + 1) + ' / ' + pad2(total);
+    progress.style.width = (total > 1 ? (idx / (total - 1)) * 100 : 0) + '%';
+    prevBtn.disabled = idx === 0 && step === 0;
+    nextBtn.disabled = idx === total - 1 && step >= maxStep(slides[idx]);
+    brand.classList.toggle('hidden', slides[idx].classList.contains('has-logo'));
+    let current = -1;
+    navItems.forEach((n, k) => { if(n.at <= idx) current = k; });
+    navItems.forEach((n, k) => n.b.classList.toggle('active', k === current));
+    history.replaceState(null, '', '#' + (idx + 1) + (step ? '.' + step : ''));
+  }
+
+  function go(n, s){
+    const prevIdx = idx;
+    idx = Math.max(0, Math.min(total - 1, n));
+    if(idx !== prevIdx) applyStep(slides[prevIdx], 0);
+    step = s === 'end' ? maxStep(slides[idx]) : Math.max(0, Math.min(maxStep(slides[idx]), s || 0));
+    render();
+  }
+  const next = () => step < maxStep(slides[idx]) ? (step++, render()) : go(idx + 1, 0);
+  const prev = () => step > 0 ? (step--, render()) : go(idx - 1, 'end');
+
+  prevBtn.addEventListener('click', prev);
+  nextBtn.addEventListener('click', next);
+
+  window.addEventListener('keydown', e => {
+    if(['ArrowRight','ArrowDown','PageDown',' ','Enter'].includes(e.key)){ e.preventDefault(); next(); }
+    else if(['ArrowLeft','ArrowUp','PageUp','Backspace'].includes(e.key)){ e.preventDefault(); prev(); }
+    else if(e.key === 'Home'){ go(0, 0); }
+    else if(e.key === 'End'){ go(total - 1, 0); }
+    else if(e.key === 'f' || e.key === 'F'){
+      document.fullscreenElement ? document.exitFullscreen() : document.documentElement.requestFullscreen();
+    }
+  });
+
+  let touchX = null;
+  window.addEventListener('touchstart', e => { touchX = e.touches[0].clientX; });
+  window.addEventListener('touchend', e => {
+    if(touchX === null) return;
+    const dx = e.changedTouches[0].clientX - touchX;
+    if(Math.abs(dx) > 60){ dx < 0 ? next() : prev(); }
+    touchX = null;
+  });
+
+  // Printing / PDF export: show every slide in its final, fully revealed state.
+  function printMode(on){
+    slides.forEach((s, i) => {
+      s.classList.toggle('active', on || i === idx);
+      applyStep(s, on ? Infinity : (i === idx ? step : 0));
+    });
+  }
+  window.addEventListener('beforeprint', () => printMode(true));
+  window.addEventListener('afterprint', () => { printMode(false); render(); });
+
+  // #7 = slide 7, #7.2 = slide 7 after two clicks, #one-on-one = slide by id
+  const h = decodeURIComponent((location.hash || '').slice(1));
+  const m = h.match(/^(\d+)(?:\.(\d+))?$/);
+  if(m){ go(+m[1] - 1, +(m[2] || 0)); }
+  else if(h && indexOfId(h) >= 0){ go(indexOfId(h), 0); }
+  else { render(); }
+  if(new URLSearchParams(location.search).has('print')) printMode(true);
+})();
+</script>
+
+</body>
+</html>
