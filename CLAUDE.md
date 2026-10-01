@@ -4,6 +4,7 @@ Slide deck for SUU's Annual Supervisor Training: "Building SUU's Future with Stu
 ## Files
 - `deck-content.js`: all wording, slide order, notes, and timings. **Edit this first.** Its header documents every layout and its fields.
 - `Supervisor Training Slidedeck.html`: layout, styling, and the renderer only. Touch it only for visual/layout changes.
+- `index.html`: GitHub Pages entry point; forwards https://nathanwiggins.github.io/student-supervising/ to the deck. Update it if the deck file is renamed.
 - `LAYOUT.md`: the original outline. Each slide's `ref` field in `deck-content.js` is its LAYOUT.md slide number.
 - `assets/`: SUU logo (from `../herfp/assets`) and the Slido QR code.
 - `export-pdf.sh`: re-exports `Supervisor Training Slidedeck.pdf`, with every click-reveal fully shown.
