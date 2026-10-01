@@ -43,8 +43,11 @@
                     starred student project. Click 2: related problems X out.
      people         eyebrow, problem, head, studentLabel, limited, realized,
                     revealSecond (true = the REALIZED row appears on click)
+     campus         eyebrow, head, subhead, buildings[{idx, title, text}] (1-4).
+                    A supervisor and two interns walk to one building per
+                    click; its title and text appear when they arrive.
      qr             eyebrow, head, lede, image, joinAt, code
-     outro          (SUU logo only)
+     outro          (SUU logo only; a red lightning strike reveals it)
    ===================================================================== */
 
 window.DECK = {
@@ -77,6 +80,7 @@ window.DECK = {
       presenters: [
         { name: "Nathan Wiggins", role: "Director of Research Analytics" },
         { name: "Owen Chadwick", role: "Lead Research Analytic Intern" },
+        { name: "Josi Bartholomew", role: "Lead Research Analytic Intern" },
       ],
       tag: { lines: ["Mentor", "Empower", "Retain"], small: "Southern Utah University" },
       notes: "",
@@ -280,19 +284,19 @@ window.DECK = {
       head: "Join on Slido",
       lede: "Scan the code with your phone's camera to join.",
       image: "assets/slido-qr.png",
-      joinAt: "",   // e.g. "slido.com"; leave "" to hide
-      code: "",     // e.g. "#1234567"; leave "" to hide
+      joinAt: "slido.com", // leave "" to hide
+      code: "#3961 349",   // leave "" to hide
       notes: "",
     },
     {
       id: "suu-community",
-      layout: "cards",
+      layout: "campus",
       ref: 15,
       minutes: 3,
       eyebrow: "Retain",
       head: "Integration into the SUU Community",
       subhead: "Ideas",
-      cards: [
+      buildings: [
         { idx: "01", title: "SUU Structure Training", text: "Help students see how SUU's colleges, departments, and offices fit together." },
         { idx: "02", title: "Campus Networking", text: "Introduce students to people across campus, beyond your own office." },
         { idx: "03", title: "Encourage Involvement", text: "Point students toward committees, events, and service that keep them connected." },

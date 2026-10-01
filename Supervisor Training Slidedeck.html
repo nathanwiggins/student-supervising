@@ -103,7 +103,7 @@ h2.head{
 .title-block{ position:relative; z-index:3; max-width:640px; }
 .title-logo{ height:132px; width:auto; margin-bottom:1.6rem; display:block; }
 
-.presenters{ display:flex; flex-wrap:wrap; gap:.9rem 2rem; margin-top:1.5rem; }
+.presenters{ display:flex; flex-wrap:wrap; gap:.9rem 2rem; margin-top:1.5rem; width:max-content; max-width:52vw; }
 .presenter{ border-left:3px solid var(--red); padding:.1rem 0 .1rem .8rem; }
 .presenter b{ display:block; font-size:1.05rem; font-weight:800; }
 .presenter span{
@@ -133,9 +133,47 @@ h1.new-title.shown{ max-height:5em; opacity:1; margin:.35rem 0 .5rem; }
 
 .brand.hidden{ opacity:0; pointer-events:none; transition:opacity .3s; }
 
-/* ---------- outro ---------- */
+/* ---------- outro: a red lightning strike reveals the logo ---------- */
 .slide.outro{ align-items:center; text-align:center; }
-.outro-logo{ width:min(52vw,620px); height:auto; display:block; margin:0 auto; }
+.outro-mark{ position:relative; width:min(52vw,620px); margin:0 auto; }
+.outro-logo{ position:relative; z-index:1; width:100%; height:auto; display:block; }
+.strike{ position:absolute; left:49%; top:6%; width:0; height:0; z-index:2; pointer-events:none; } /* top of the middle U */
+.strike-flash{
+  position:absolute; left:-100vmax; top:-100vmax; width:200vmax; height:200vmax; z-index:-2; opacity:0;
+  background:radial-gradient(circle, rgba(219,0,0,.32) 0, rgba(219,0,0,.1) 16%, transparent 42%);
+}
+.bolt{
+  position:absolute; bottom:0; left:-10vh; height:44vh; width:20vh; overflow:visible; opacity:0;
+  filter:drop-shadow(0 0 5px rgba(219,0,0,.9)) drop-shadow(0 0 16px rgba(219,0,0,.5));
+}
+.bolt polyline{ fill:none; stroke-linejoin:round; stroke-linecap:round; stroke-dasharray:1 1; stroke-dashoffset:1; }
+.bolt .main{ stroke:var(--red); stroke-width:5; }
+.bolt .core{ stroke:#ff9a9a; stroke-width:1.6; }
+.bolt .branch{ stroke:var(--red); stroke-width:2.6; }
+.strike-ring{
+  position:absolute; left:-32px; top:-32px; width:64px; height:64px; border-radius:50%;
+  border:3px solid var(--red); opacity:0;
+}
+.slide.outro.active .bolt{ animation:bolt-life 1.3s .45s forwards; }
+.slide.outro.active .bolt .main, .slide.outro.active .bolt .core{ animation:bolt-draw .16s .45s linear forwards; }
+.slide.outro.active .bolt .branch{ animation:bolt-draw .1s .55s linear forwards; }
+.slide.outro.active .strike-flash{ animation:strike-flash 1.1s .59s forwards; }
+.slide.outro.active .strike-ring{ animation:strike-ring .75s .6s cubic-bezier(.22,.61,.36,1) forwards; }
+.slide.outro.active .outro-logo{ animation:logo-jolt .7s .59s both; }
+@keyframes bolt-draw{ from{ stroke-dashoffset:1; } to{ stroke-dashoffset:0; } }
+@keyframes bolt-life{
+  0%,30%{ opacity:1; } 36%{ opacity:.15; } 42%{ opacity:1; } 50%{ opacity:.4; } 56%,78%{ opacity:1; } 100%{ opacity:0; }
+}
+@keyframes strike-flash{ 0%{ opacity:0; } 6%{ opacity:1; } 20%{ opacity:.25; } 28%{ opacity:.85; } 60%,100%{ opacity:0; } }
+@keyframes strike-ring{ from{ opacity:.85; transform:scale(.2); } to{ opacity:0; transform:scale(5); } }
+@keyframes logo-jolt{
+  0%{ opacity:0; transform:scale(.92); }
+  12%{ opacity:1; transform:scale(1.05) translate(-4px,2px); }
+  24%{ transform:scale(1.02) translate(4px,-2px); }
+  36%{ transform:translate(-3px,1px); }
+  48%{ transform:translate(2px,0); }
+  64%,100%{ opacity:1; transform:none; }
+}
 
 /* ---------- divider slides ---------- */
 .slide.divider{ background:var(--red); align-items:center; justify-content:center; text-align:center; }
@@ -271,6 +309,100 @@ svg.web{ width:100%; height:auto; max-height:62vh; display:block; overflow:visib
 .row-caption b{ color:var(--ink); font-weight:800; letter-spacing:.03em; }
 .row-caption .accent{ font-weight:800; letter-spacing:.03em; }
 
+/* ---------- campus walk: buildings + a supervisor and two interns ---------- */
+.slide.campus{
+  --bldg-idle:#d8d2cb; --bldg-line:rgba(22,21,19,.24); --window:#ebe6e0; --lit:#fbe3a4;
+  --arrive:calc(var(--walk, 0s) + .05s); /* a building opens once the walkers reach it */
+}
+.campus-scene{ position:relative; margin-top:.4rem; }
+.campus-row{ display:grid; grid-template-columns:repeat(var(--n),minmax(0,1fr)); column-gap:var(--gap); align-items:end; }
+.bldg{ display:flex; flex-direction:column; min-width:0; }
+.roof{ display:block; width:calc(100% + 12px); height:auto; margin:0 -6px; }
+.roof .r{ fill:var(--bldg-idle); transition:fill .5s; }
+.roof .wall, .roof .ocul, .roof .clock{ fill:var(--paper); stroke:var(--bldg-line); stroke-width:1.5; }
+.roof .tymp{ fill:#fff; opacity:.28; }
+.roof .slit{ fill:var(--window); stroke:var(--bldg-line); stroke-width:1.2; transition:fill .5s; }
+.roof .hands line{ stroke:var(--ink); stroke-width:2.5; stroke-linecap:round; }
+.roof .hands{ transform-box:view-box; transform-origin:150px 66px; }
+.roof .pole{ stroke:var(--ink-soft); stroke-width:2.5; stroke-linecap:round; }
+.roof .flag{ opacity:0; transform:translateY(22px); transition:opacity .2s; }
+.roof .flag path{ fill:var(--red); transform-box:view-box; transform-origin:151px 12px; }
+.cornice{
+  height:24px; margin:0 -6px; background:var(--bldg-idle); color:var(--ink-soft);
+  display:flex; align-items:center; justify-content:center;
+  font-family:var(--mono); font-weight:800; font-size:.72rem; letter-spacing:.14em;
+  transition:background .5s, color .5s;
+}
+.facade{
+  position:relative; height:clamp(176px,27vh,250px); background:var(--paper);
+  border:solid var(--bldg-line); border-width:0 1.5px;
+}
+.windows{
+  position:absolute; inset:18px 20px; display:grid; grid-template-columns:repeat(3,1fr); grid-template-rows:repeat(2,1fr);
+  gap:16px 22px; transition:opacity .35s;
+}
+.windows i{
+  background:linear-gradient(90deg, transparent calc(50% - .75px), var(--bldg-line) 0 calc(50% + .75px), transparent 0), var(--window);
+  border:1.5px solid var(--bldg-line); border-radius:50% 50% 3px 3px / 26% 26% 3px 3px;
+}
+.info{
+  position:absolute; inset:0; padding:1.1rem 1.25rem; display:flex; flex-direction:column; justify-content:center;
+  opacity:0; transform:translateY(10px); transition:opacity .45s, transform .45s cubic-bezier(.22,.61,.36,1);
+}
+.info h3{ font-size:clamp(1.15rem,1.6vw,1.4rem); font-weight:800; line-height:1.2; letter-spacing:-.005em; margin:0 0 .45rem; }
+.info p{ font-size:clamp(.95rem,1.25vw,1.05rem); line-height:1.5; color:var(--ink-soft); margin:0; }
+.groundfl{
+  height:clamp(52px,7.5vh,66px); background:var(--paper); border:1.5px solid var(--bldg-line); border-bottom:0;
+  display:flex; align-items:center; justify-content:space-evenly;
+}
+.groundfl i{ width:12%; height:44%; background:var(--window); border:1.5px solid var(--bldg-line); border-radius:2px; transition:background .5s; }
+.groundfl .door{ align-self:flex-end; width:15%; height:76%; background:var(--bldg-idle); border-radius:999px 999px 0 0; transition:background .5s; }
+.plinth{ height:10px; margin:0 -10px; background:var(--bldg-idle); border-radius:2px 2px 0 0; }
+
+/* arrival: lights on, roof goes red, details animate, then the card text */
+.bldg.shown .roof .r{ fill:var(--red); transition-delay:var(--arrive); }
+.bldg.shown .cornice{ background:var(--red); color:#fff; transition-delay:var(--arrive); }
+.bldg.shown .groundfl i, .bldg.shown .roof .slit{ background:var(--lit); fill:var(--lit); transition-delay:var(--arrive); }
+.bldg.shown .groundfl .door{ background:var(--red-dark); transition-delay:var(--arrive); }
+.bldg.shown .windows{ opacity:0; transition-delay:var(--arrive); }
+.bldg.shown .info{ opacity:1; transform:none; transition-delay:calc(var(--arrive) + .15s); }
+.bldg.shown .roof .hands{ transform:rotate(360deg); transition:transform 1.2s var(--arrive) cubic-bezier(.22,.61,.36,1); }
+.bldg.shown .roof .flag{ opacity:1; transform:none; transition:opacity .3s var(--arrive), transform .9s var(--arrive) cubic-bezier(.22,.61,.36,1); }
+.bldg.shown .roof .flag path{ animation:flag-wave 1.8s ease-in-out infinite; }
+@keyframes flag-wave{ 0%,100%{ transform:none; } 50%{ transform:skewY(7deg) scaleX(.9); } }
+
+.sidewalk{
+  height:26px; margin:0 -12%; border-top:2px solid rgba(22,21,19,.16);
+  background:repeating-linear-gradient(90deg, transparent 0 58px, rgba(22,21,19,.07) 58px 60px), var(--paper-soft);
+  -webkit-mask-image:linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent);
+  mask-image:linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent);
+}
+/* .walkers spans the scene, so translateX(%) moves the trio by % of the scene */
+.walkers{
+  position:absolute; left:0; bottom:7px; width:100%; height:0; z-index:2; pointer-events:none;
+  transform:translateX(var(--x, 0%)); transition:transform var(--walk, 0s) cubic-bezier(.42,.05,.58,.95);
+}
+.trio{
+  --wh:clamp(84px,12.5vh,114px);
+  position:absolute; left:0; bottom:0; display:flex; align-items:flex-end; gap:2px;
+  transform:translateX(-50%); transition:transform .3s;
+}
+.campus.back .trio{ transform:translateX(-50%) scaleX(-1); }
+.walker{ display:block; height:var(--wh); width:calc(var(--wh) * 64 / 172); overflow:visible; transform-origin:50% 100%; transition:transform .3s; }
+.walker.intern{ height:calc(var(--wh) * .88); width:calc(var(--wh) * .88 * 64 / 172); }
+.walker line{ stroke:var(--person); stroke-width:12; stroke-linecap:round; }
+.walker circle, .walker rect{ fill:var(--person); }
+.walker.intern line{ stroke:var(--red); }
+.walker.intern circle, .walker.intern rect{ fill:var(--red); }
+.walker .limb{ transform-box:view-box; }
+.campus.walking .walker{ transform:rotate(3deg); }
+.campus.walking .walker .limb{ animation:limb-swing .34s ease-in-out infinite alternate; }
+.campus.walking .walker .bod{ animation:walk-bob .17s ease-in-out infinite alternate; }
+.campus.walking .walker:nth-child(1) *{ animation-delay:-.24s; }
+.campus.walking .walker:nth-child(2) *{ animation-delay:-.12s; }
+@keyframes limb-swing{ from{ transform:rotate(calc(var(--a) * 1deg)); } to{ transform:rotate(calc(var(--a) * -1deg)); } }
+@keyframes walk-bob{ from{ transform:none; } to{ transform:translateY(-4px); } }
+
 /* ---------- QR slide ---------- */
 .qr-layout{ display:grid; grid-template-columns:minmax(0,1fr) auto; gap:5vw; align-items:center; }
 .qr-layout .lede{ font-size:clamp(1.05rem,1.7vw,1.3rem); line-height:1.55; color:var(--ink-soft); max-width:560px; margin:0; }
@@ -278,7 +410,7 @@ svg.web{ width:100%; height:auto; max-height:62vh; display:block; overflow:visib
 .qr-card img{ width:min(52vh,440px); height:auto; display:block; image-rendering:pixelated; }
 .join{ display:inline-flex; gap:2rem; margin-top:1.8rem; padding:1rem 1.4rem; background:var(--ink); color:#fff; border-radius:var(--radius); }
 .join .jl{ display:block; font-family:var(--mono); font-size:.68rem; letter-spacing:.12em; text-transform:uppercase; color:rgba(255,255,255,.65); }
-.join .jv{ display:block; font-family:var(--mono); font-weight:800; font-size:1.5rem; margin-top:.2rem; }
+.join .jv{ display:block; font-family:var(--mono); font-weight:800; font-size:1.5rem; margin-top:.2rem; white-space:nowrap; }
 .join.missing{ background:none; color:var(--red); border:2px dashed var(--red); font-family:var(--mono); font-size:.8rem; letter-spacing:.04em; }
 
 /* ---------- footer / nav chrome ---------- */
@@ -339,6 +471,9 @@ svg.web{ width:100%; height:auto; max-height:62vh; display:block; overflow:visib
   .slide{ transition:opacity .15s linear; transform:none !important; }
   .slide.active{ transform:none !important; }
   .progress, .balseg, .build, .web *, .old-title, .new-title{ transition:none !important; }
+  .campus *{ transition:none !important; animation:none !important; }
+  .strike{ display:none; }
+  .outro-logo{ animation:none !important; }
 }
 
 button:focus-visible, .topnav button:focus-visible{
@@ -362,6 +497,8 @@ button:focus-visible, .topnav button:focus-visible{
   }
   .slide.divider{ background:var(--red); }
   .slide, .slide *{ transition:none !important; }
+  .strike{ display:none !important; }
+  .outro-logo{ animation:none !important; }
 }
 </style>
 <script>
@@ -530,6 +667,34 @@ button:focus-visible, .topnav button:focus-visible{
     </svg>`;
   }
 
+  // A walking person (same build as person() above). Limbs swing from hip/shoulder while .walking.
+  function walker(cls){
+    const limb = (x1, y1, x2, y2, a) =>
+      `<line class="limb" style="--a:${a};transform-origin:${x1}px ${y1}px" x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}"/>`;
+    return `<svg class="walker ${cls}" viewBox="0 0 64 172">
+      <g class="bod">
+        ${limb(24, 90, 22, 162, 22)}${limb(40, 90, 42, 162, -22)}
+        ${limb(17, 50, 10, 104, -18)}${limb(47, 50, 54, 104, 18)}
+        <rect x="13" y="40" width="38" height="62" rx="16"/>
+        <circle cx="32" cy="18" r="17"/>
+      </g>
+    </svg>`;
+  }
+
+  // Campus rooftops, cycled across buildings: a columned hall, a clock tower, a domed hall with a flag.
+  const ROOFS = [
+    { h:64, svg:`<path class="r" d="M0 64L150 4L300 64Z"/><path class="tymp" d="M40 58L150 14L260 58Z"/>
+      <circle class="ocul" cx="150" cy="42" r="8"/>` },
+    { h:96, svg:`<rect class="wall" x="114" y="36" width="72" height="60"/><path class="r" d="M106 38L150 4L194 38Z"/>
+      <circle class="clock" cx="150" cy="66" r="17"/>
+      <g class="hands"><line x1="150" y1="66" x2="150" y2="55"/><line x1="150" y1="66" x2="157" y2="66"/></g>` },
+    { h:104, svg:`<line class="pole" x1="150" y1="34" x2="150" y2="4"/>
+      <g class="flag"><path d="M151 5L180 12L151 19Z"/></g>
+      <rect class="wall" x="104" y="80" width="92" height="24"/>
+      <rect class="slit" x="120" y="85" width="8" height="14"/><rect class="slit" x="146" y="85" width="8" height="14"/><rect class="slit" x="172" y="85" width="8" height="14"/>
+      <path class="r" d="M100 82A50 50 0 0 1 200 82Z"/>` },
+  ];
+
   /* ---------- layouts ---------- */
   const titleSlide = D.slides.find(s => s.layout === 'title');
 
@@ -611,6 +776,50 @@ button:focus-visible, .topnav button:focus-visible{
         <div class="people-row${second}">${peopleRow('realized', s.studentLabel)}<div class="row-caption">${fmt(s.realized)}</div></div>`) };
     },
 
+    'campus': s => {
+      const list = (s.buildings || []).slice(0, 4);
+      if(!list.length) throw new Error('campus needs at least one building');
+      const n = list.length, gap = 5, w = (100 - gap * (n - 1)) / n;
+      // Where the walkers stand, in % of the scene: the start, then each building's door.
+      const stops = [-4.5, ...list.map((_, i) => i * (w + gap) + w / 2)];
+      const bldgs = list.map((b, i) => {
+        const roof = ROOFS[i % ROOFS.length];
+        return `<div class="bldg" data-step="${i+1}">
+          <svg class="roof" viewBox="0 0 300 ${roof.h}" aria-hidden="true">${roof.svg}</svg>
+          <div class="cornice">${fmt(b.idx || pad2(i+1))}</div>
+          <div class="facade">
+            <div class="windows" aria-hidden="true">${'<i></i>'.repeat(6)}</div>
+            <div class="info"><h3>${heading(b.title)}</h3>${b.text ? `<p>${fmt(b.text)}</p>` : ''}</div>
+          </div>
+          <div class="groundfl" aria-hidden="true"><i></i><i></i><b class="door"></b><i></i><i></i></div>
+          <div class="plinth"></div>
+        </div>`;
+      }).join('');
+      return { cls:'campus', html:`<div class="slide-inner">${headBlock(s)}
+        <div class="campus-scene">
+          <div class="campus-row" style="--n:${n};--gap:${gap}%">${bldgs}</div>
+          <div class="sidewalk"></div>
+          <div class="walkers" aria-hidden="true"><div class="trio">${walker('intern')}${walker('intern')}${walker('supervisor')}</div></div>
+        </div></div>`,
+        init: el => {
+          const walkers = el.querySelector('.walkers');
+          let at = 0, timer;
+          walkers.style.setProperty('--x', stops[0] + '%');
+          // One click walks to the next stop; any bigger jump (entering from the end, leaving, printing) snaps.
+          el.onStep = to => {
+            if(to === at) return;
+            const secs = Math.abs(to - at) === 1 ? Math.abs(stops[to] - stops[at]) * .052 : 0;
+            el.style.setProperty('--walk', secs + 's');
+            el.classList.toggle('back', secs > 0 && to < at);
+            el.classList.toggle('walking', secs > 0);
+            walkers.style.setProperty('--x', stops[to] + '%');
+            clearTimeout(timer);
+            if(secs) timer = setTimeout(() => el.classList.remove('walking'), secs * 1000);
+            at = to;
+          };
+        } };
+    },
+
     'qr': s => {
       const parts = [];
       if(s.joinAt) parts.push(`<div><span class="jl">Join at</span><span class="jv">${esc(s.joinAt)}</span></div>`);
@@ -624,7 +833,21 @@ button:focus-visible, .topnav button:focus-visible{
       </div>` };
     },
 
-    'outro': () => ({ cls:'outro has-logo', html:`<img class="outro-logo" src="assets/suu-logo.png" alt="Southern Utah University">` }),
+    'outro': () => ({ cls:'outro has-logo', html:`
+      <div class="outro-mark">
+        <div class="strike" aria-hidden="true">
+          <div class="strike-flash"></div>
+          <svg class="bolt" viewBox="0 0 200 440">
+            <polyline class="main" pathLength="1" points="118,0 92,48 128,95 84,145 120,185 78,240 116,282 86,334 112,374 96,410 100,440"/>
+            <polyline class="core" pathLength="1" points="118,0 92,48 128,95 84,145 120,185 78,240 116,282 86,334 112,374 96,410 100,440"/>
+            <polyline class="branch" pathLength="1" points="84,145 52,175 38,212"/>
+            <polyline class="branch" pathLength="1" points="116,282 146,306 156,338"/>
+            <polyline class="branch" pathLength="1" points="86,334 66,356"/>
+          </svg>
+          <span class="strike-ring"></span>
+        </div>
+        <img class="outro-logo" src="assets/suu-logo.png" alt="Southern Utah University">
+      </div>` }),
   };
 
   /* ---------- build slides ---------- */
@@ -648,6 +871,7 @@ button:focus-visible, .topnav button:focus-visible{
     el.className = 'slide ' + (out.cls || '');
     el.dataset.id = s.id || '';
     el.innerHTML = out.html;
+    if(out.init) out.init(el);
     deck.appendChild(el);
     slides.push(el);
   });
@@ -682,7 +906,10 @@ button:focus-visible, .topnav button:focus-visible{
   let idx = 0, step = 0;
 
   const maxStep = el => Math.max(0, ...Array.from(el.querySelectorAll('[data-step]'), x => +x.dataset.step));
-  const applyStep = (el, n) => el.querySelectorAll('[data-step]').forEach(x => x.classList.toggle('shown', +x.dataset.step <= n));
+  const applyStep = (el, n) => {
+    if(el.onStep) el.onStep(Math.min(n, maxStep(el))); // layouts that animate between steps (campus)
+    el.querySelectorAll('[data-step]').forEach(x => x.classList.toggle('shown', +x.dataset.step <= n));
+  };
 
   function render(){
     slides.forEach((s, i) => s.classList.toggle('active', i === idx));
